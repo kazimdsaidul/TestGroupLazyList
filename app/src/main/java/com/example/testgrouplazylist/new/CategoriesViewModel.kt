@@ -20,7 +20,7 @@ class CategoriesViewModel : ViewModel() {
             delay(1000) // Simulate delay for category API call
 
             // Update categories with fetched data
-            val updatedCategories = List(20) { categoryIndex ->
+            val updatedCategories = List(50) { categoryIndex ->
                 Category(
                     id = categoryIndex + 1,
                     name = "Category ${categoryIndex + 1}",
