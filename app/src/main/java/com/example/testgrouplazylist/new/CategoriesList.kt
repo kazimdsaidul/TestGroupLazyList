@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
@@ -32,9 +34,17 @@ fun CategoryItem(category: Category) {
             text = category.name,
             style = MaterialTheme.typography.headlineSmall
         )
+
         LazyRow(modifier = Modifier.padding(vertical = 8.dp)) {
-            items(category.playlists) { playlist ->
-                PlaylistItem(playlist = playlist)
+            val playlists by category.playlists
+            if (playlists.isEmpty()) {
+                item {
+                    Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
+                }
+            } else {
+                items(playlists) { playlist ->
+                    PlaylistItem(playlist = playlist)
+                }
             }
         }
     }
@@ -60,6 +70,6 @@ data class Playlist(
 
 data class Category(
     val name: String,
-    val playlists: List<Playlist>,
+    val playlists: MutableState<List<Playlist>>,
     val id: Int
 )
