@@ -55,10 +55,7 @@ fun PlaylistItem(playlist: Playlist) {
 data class Playlist(
     val id: Int,
     val name: String, val description: String, val imageUrl: String
-) {
-
-
-}
+)
 
 data class Category(
     val name: String,
