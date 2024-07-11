@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,7 @@ fun CategoriesList(viewModel: CategoriesViewModel = viewModel()) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        items(viewModel.categories) { category ->
+        items(viewModel.categories, key = { it.id }) { category ->
             CategoryItem(category = category)
         }
     }
@@ -42,7 +41,7 @@ fun CategoryItem(category: Category) {
                     Text(text = "Loading...", style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
-                items(playlists) { playlist ->
+                items(playlists, key = { it.id }) { playlist ->
                     PlaylistItem(playlist = playlist)
                 }
             }
