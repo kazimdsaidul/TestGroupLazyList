@@ -4,10 +4,17 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.testgrouplazylist.new.model.Category
+import com.example.testgrouplazylist.new.model.Playlist
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel : ViewModel() {
+    private val _state = MutableStateFlow<CategoriesUiState>(CategoriesUiState.Loading)
+    val state: StateFlow<CategoriesUiState> = _state
+
     val categories = mutableStateListOf<Category>()
 
 
@@ -17,19 +24,20 @@ class CategoriesViewModel : ViewModel() {
 
     private fun callAPIData() {
         viewModelScope.launch {
-            delay(1000) // Simulate delay for category API call
+            delay(2000) // Simulate delay for category API call
+            // Simulate an error case
+//             _state.value = CategoriesUiState.Error("Failed to load categories", null);
 
             // Update categories with fetched data
-            val updatedCategories = List(50) { categoryIndex ->
+            val updatedCategories = List(20) { categoryIndex ->
                 Category(
                     id = categoryIndex + 1,
                     name = "Category ${categoryIndex + 1}",
-                    playlists = mutableStateOf(emptyList()) // Initially empty, to simulate loading state
+                    playlists = mutableStateOf(emptyList()) // Use MutableState for playlists
                 )
             }
 
-            categories.clear()
-            categories.addAll(updatedCategories)
+            _state.value = CategoriesUiState.Ready(updatedCategories)
 
             // Simulate playlist API calls for each category
             updatedCategories.forEach { category ->
@@ -44,10 +52,15 @@ class CategoriesViewModel : ViewModel() {
                         )
                     }
                     // Update the category with the fetched playlists
-                    categories.find { it.id == category.id }?.playlists?.value = playlists
-
+                    updatedCategories.find { it.id == category.id }?.playlists?.value = playlists
+                    _state.value = CategoriesUiState.Ready(updatedCategories)
                 }
             }
         }
+    }
+
+    fun retry() {
+        _state.value = CategoriesUiState.Loading
+        callAPIData()
     }
 }
